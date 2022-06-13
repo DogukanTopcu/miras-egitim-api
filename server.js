@@ -12,7 +12,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-mongoose.connect("mongodb://localhost:27017/miras-egitim", {useNewUrlParser: true}, err => {
+// mongodb://localhost:27017/miras-egitim
+mongoose.connect("mongodb+srv://dogukantopcu35:11Mart2003@cluster0.0fzxo.mongodb.net/?retryWrites=true&w=majority", {useNewUrlParser: true}, err => {
     if (err) throw err;
     console.log("Connected");
 })
@@ -25,41 +26,35 @@ mongoose.connect("mongodb://localhost:27017/miras-egitim", {useNewUrlParser: tru
         localhost:5555/createAdmin sayfasını aç.
 */
 
-// app.get("/createAdmin", (req, res) => {
-//     Admin.create({
-//         username: "doguk",
-//         password: "02584560"
-//     }, err => {
-//         if (err) res.sendStatus(400);
-//         res.sendStatus(200);
-//     })
-// });
+app.get("/createAdmin", (req, res) => {
+    Admin.create({
+        username: "doguk",
+        password: "02584560"
+    }, err => {
+        if (err) res.sendStatus(400);
+        res.sendStatus(200);
+    })
+});
 
 
 
 app.post("/adminLogin", (req, res) => {
     const {username, password} = req.body;
-    Admin.find({username: username}).then(doc => {
-        if (doc[0].password === password) {
-            res.send("Successful");
-        }
+    Admin.findOne({username: username, password: password}).then((doc) => {
+        res.send(doc);
+    }).catch(err => {
+        console.log(err);
     })
 })
 
 app.post("/userLogin", (req, res) => {
     const { email, password } = req.body;
-    Students.find({email: email}).then(doc => {
-        if (doc[0].password === password) {
-            res.send("Successful");
-            res.end();
-        }
-    })
-    Experts.find({email: email}).then(doc => {
-        if (doc[0].password === password) {
-            res.send("Successful");
-            res.end();
-        }
-    })
+
+    Students.findOne({email: email, password: password}).then((doc) => {
+        res.send(doc);
+    }).catch(err => {
+        console.log(err);
+    });
 
 })
 
