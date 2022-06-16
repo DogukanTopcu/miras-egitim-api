@@ -132,14 +132,17 @@ app.post("/saveUser", (req, res) => {
     const {email, password, fullName, city, manner, major, image, verified, desc} = req.body.user;
 
     console.log(email, password, fullName, city, manner, image, verified)
+
     if (manner == "searcher") {
+
+        console.log("inside");
         Students.create({
             email: email,
             password: password,
             fullName: fullName,
             city: city,
             verified: verified,
-            image: image,
+            // image: image,
 
             // signedDate: Date.now(),
 
