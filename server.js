@@ -8,6 +8,9 @@ import Experts from "./Models/Experts";
 import Students from "./Models/Students";
 import Admin from "./Models/Admin";
 
+import { Date } from "mongoose";
+import { major } from "semver";
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -98,7 +101,7 @@ app.post("/sendVerificationMail", (req, res) => {
             <h1>Doğrulama Kodu</h1>
             <h2>${this.userId}</h2>
             <h4>Lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
-            <a href="http://localhost:3000/onaylandi">ONAYLA</a>
+            <a href="http://localhost:3000/onaylandi/${req.body.email}">ONAYLA</a>
         `
     };
 
@@ -126,33 +129,51 @@ app.post("/sendVerificationMail", (req, res) => {
 app.post("/saveUser", (req, res) => {
     console.log(req.body);
 
-    const {email, password, fullName, location, manner, image, verified} = req.body.user;
+    const {email, password, fullName, city, manner, major, image, verified, desc} = req.body.user;
 
-    console.log(email, password, fullName, location, manner, image, verified)
+    console.log(email, password, fullName, city, manner, image, verified)
     if (manner == "searcher") {
         Students.create({
             email: email,
             password: password,
             fullName: fullName,
-            location: location,
+            city: city,
             verified: verified,
             image: image,
+
+            // signedDate: Date.now(),
+
         }, err => {
             if (err) res.sendStatus(400);
             res.sendStatus(200);
         })
     }
 
-    if (manner == "adviser") {
+    if (manner == "advisor") {
         Experts.create({
             email: email,
             password: password,
             fullName: fullName,
-            location: location,
+            
+            city: city,
+            desc: desc,
+            major: major,
+
             verified: verified,
+
+
             image: image,
             isVipOfWeek: false,
             isVip: false,
+
+            // signedDate: Date.now,
+            // verifiedDate: Date.now,
+
+            // weeklyVipDate: Date,
+            // vipDate: Date,
+            weeklyVipNumber: 0,
+            vipNumber: 0,
+
         }, err => {
             if (err) res.sendStatus(400);
             res.sendStatus(200);

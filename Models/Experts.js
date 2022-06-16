@@ -7,13 +7,23 @@ const ExpertsSchema = Schema({
     password: String,
     image: String,
 
-    location: String,
-    profession: String,
+    city: String,
+    major: String,
+    desc: String,
+
+    verified: Boolean,
+    // verifiedCode: Int16Array,
+    signedDate: Date,
+    verifiedDate: Date,
 
     isVipOfWeek: Boolean,
     isVip: Boolean,
+    weeklyVipDate: Date,
+    vipDate: Date,
+    // weeklyVipNumber: Int16Array,
+    // vipNumber: Int16Array,
 
-    verified: Boolean,
+
 });
 
 export default mongoose.model("experts", ExpertsSchema);

@@ -2,14 +2,19 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
 const StudentsSchema = Schema({
-    fullName: String,
-    email: String,
-    password: String,
+    fullName: {type: String},
+    email: {type: String},
+    password: {type: String},
     image: String,
 
-    location: String,
+    city: {type: String},
+    
+    verified: {type: Boolean},
+    verifiedCode: String,
 
-    verified: Boolean,
+    signedDate: {type: String, default: Date.now},
+    verifiedDate: Date
+    
 
 });
 
