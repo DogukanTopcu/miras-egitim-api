@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { random } from "lodash";
 
 const Schema = mongoose.Schema
 const ExpertsSchema = Schema({
@@ -12,7 +13,8 @@ const ExpertsSchema = Schema({
     desc: {type: String},
 
     verified: {type: Boolean},
-    // verifiedCode: Int16Array,
+    verifiedCode: {type: Number},
+
     signedDate: {type: Date, default: Date.now()},
     verifiedDate: {type: Date},
 

@@ -3,6 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer"; 
+import url from "url";
 
 import Experts from "./Models/Experts";
 import Students from "./Models/Students";
@@ -70,56 +71,106 @@ app.post("/sendVerificationMail", (req, res) => {
     console.log(req.body.email);
     console.log(req.body.manner);
 
-    var userId;
 
     if (req.body.manner == "searcher") {
-        const searcher = Students.findOne({email: req.body.email});
-        console.log(searcher)
-    }
-    if (req.body.manner == "adviser") {
-        Experts.findOne({email: req.body.email}).then(doc => {
-            userId = doc._id
-            console.log(userId);
+        Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+            // console.log(doc);
+            console.log(doc.verifiedCode);
+
+            var transfer = nodemailer.createTransport({
+                service: "hotmail",
+                auth:{
+                    user: "dogukan_topcu35@hotmail.com",
+                    pass: "dT={11.03.2003}"
+                }
+            });
+        
+            var mailInfo = {
+                from: "dogukan_topcu35@hotmail.com",
+                to: req.body.email,
+                subject: "Send a mail with NodeJs",
+                text: "My first mail sent with NodeJs.",
+                html: `
+                    <h1>Doğrulama Kodu</h1>
+                    <h2>${doc.verifiedCode}</h2>
+                    <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                    <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                `
+            };
+        
+            transfer.sendMail(mailInfo, (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log("Your mail was sent.");
+                };
+            });
         });
     }
-    console.log(userId);
 
-    var transfer = nodemailer.createTransport({
-        service: "hotmail",
-        auth:{
-            user: "dogukan_topcu35@hotmail.com",
-            pass: "dT={11.03.2003}"
+    if (req.body.manner == "advisor") {
+        Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+            console.log(doc.verifiedCode);
+
+            var transfer = nodemailer.createTransport({
+                service: "hotmail",
+                auth:{
+                    user: "dogukan_topcu35@hotmail.com",
+                    pass: "dT={11.03.2003}"
+                }
+            });
+        
+            var mailInfo = {
+                from: "dogukan_topcu35@hotmail.com",
+                to: req.body.email,
+                subject: "Send a mail with NodeJs",
+                text: "My first mail sent with NodeJs.",
+                html: `
+                    <h1>Doğrulama Kodu</h1>
+                    <h2>${doc.verifiedCode}</h2>
+                    <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                    <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                `
+            };
+        
+            transfer.sendMail(mailInfo, (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log("Your mail was sent.");
+                };
+            });
+        });
+    }
+
+});
+
+app.get("/verified", (req, res) => {
+    console.log(req.query);
+    console.log(req.query.email);
+    console.log(req.query.verifiedCode);
+
+    var q = {
+        email: req.query.email.toString(),
+        verifiedCode: req.query.verifiedCode
+    }
+    
+    Students.updateOne(q, {$set:{verified: true}}, (err, docs) => {
+        if (err) throw err;
+        console.log(docs);
+        console.log("Updated");
+        if (docs.modifiedCount == 1) {
+            res.sendFile(__dirname + "/Views/verification.html");
+        }
+    });
+    
+    Experts.updateOne(q, {$set:{verified: true}}, (err, docs) => {
+        if (err) throw err;
+        console.log(docs);
+        console.log("Updated");
+        if (docs.modifiedCount == 1) {
+            res.sendFile(__dirname + "/Views/verification.html");
         }
     });
 
-    var mailInfo = {
-        from: "dogukan_topcu35@hotmail.com",
-        to: req.body.email,
-        subject: "Send a mail with NodeJs",
-        text: "My first mail sent with NodeJs.",
-        html: `
-            <h1>Doğrulama Kodu</h1>
-            <h2>${this.userId}</h2>
-            <h4>Lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
-            <a href="http://localhost:3000/onaylandi/${req.body.email}">ONAYLA</a>
-        `
-    };
-
-    transfer.sendMail(mailInfo, (err) => {
-        if (err) console.log(err);
-        else {
-            console.log("Your mail was sent.");
-            Students.updateOne({email: req.body.email, manner: "searcher"}, {$set:{verified: true}}, (err) => {
-                if (err) throw err;
-                console.log("Updated");
-            });
-
-            Experts.updateOne({email: req.body.email, manner: "adviser"}, {$set:{verified: true}}, (err) => {
-                if (err) throw err;
-                console.log("Updated");
-            });
-        };
-    });
 })
 
 
@@ -129,9 +180,9 @@ app.post("/sendVerificationMail", (req, res) => {
 app.post("/saveUser", (req, res) => {
     console.log(req.body);
 
-    const {email, password, fullName, city, manner, major, image, verified, desc} = req.body.user;
+    const {email, password, fullName, city, manner, major, image, verified, desc, verifiedCode} = req.body.user;
 
-    console.log(email, password, fullName, city, manner, image, verified)
+    console.log(email, password, fullName, city, manner, image, verified, verifiedCode);
 
     if (manner == "searcher") {
 
@@ -142,9 +193,9 @@ app.post("/saveUser", (req, res) => {
             fullName: fullName,
             city: city,
             verified: verified,
-            // image: image,
+            verifiedCode: verifiedCode,
+            image: image,
 
-            // signedDate: Date.now(),
 
         }, err => {
             if (err) res.sendStatus(400);
@@ -163,6 +214,7 @@ app.post("/saveUser", (req, res) => {
             major: major,
 
             verified: verified,
+            verifiedCode: verifiedCode,
 
 
             image: image,

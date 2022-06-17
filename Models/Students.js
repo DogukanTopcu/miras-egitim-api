@@ -11,8 +11,8 @@ const StudentsSchema = Schema({
 
     city: {type: String},
     
-    verified: {type: Boolean},
-    verifiedCode: {type: Number, default: random(0, 100000)},
+    verified: Boolean,
+    verifiedCode: {type: Number},
 
     signedDate: {type: String, default: Date.now},
     verifiedDate: Date
