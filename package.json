@@ -19,7 +19,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon -r esm server.js"
+    "start": "nodemon -r esm index.js"
   },
   "repository": {
     "type": "git",
