@@ -12,6 +12,8 @@ import Admin from "./Models/Admin";
 import { Date } from "mongoose";
 import { major } from "semver";
 
+require("dotenv").config();
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -470,4 +472,6 @@ app.get("/admins", (req, res) => {
 });
 
 
-app.listen(3005);
+app.listen(process.env.PORT || 3005, () => {
+    console.log(`Server is working on ${process.env.PORT || 3005} port.`);
+});
