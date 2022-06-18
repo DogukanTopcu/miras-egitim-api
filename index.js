@@ -82,7 +82,6 @@ app.post("/userLogin", (req, res) => {
 app.post("/sendNewVerificationMail", (req, res) => {
     Students.findOne({email: req.body.email}).then(doc => {
         if (doc.verifiedCode) {
-            console.log(doc.verifiedCode);
             var transfer = nodemailer.createTransport({
                 service: "hotmail",
                 auth:{
@@ -105,7 +104,7 @@ app.post("/sendNewVerificationMail", (req, res) => {
             };
         
             transfer.sendMail(mailInfo, (err) => {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     console.log("Your mail was sent.");
                 };
@@ -152,15 +151,10 @@ app.post("/sendNewVerificationMail", (req, res) => {
 })
 
 app.post("/sendVerificationMail", (req, res) => {
-    console.log(req.body);
-    console.log(req.body.email);
-    console.log(req.body.manner);
 
 
     if (req.body.manner == "searcher") {
         Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
-            // console.log(doc);
-            console.log(doc.verifiedCode);
 
             var transfer = nodemailer.createTransport({
                 service: "hotmail",
@@ -184,7 +178,7 @@ app.post("/sendVerificationMail", (req, res) => {
             };
         
             transfer.sendMail(mailInfo, (err) => {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     console.log("Your mail was sent.");
                 };
@@ -194,7 +188,6 @@ app.post("/sendVerificationMail", (req, res) => {
 
     if (req.body.manner == "advisor") {
         Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
-            console.log(doc.verifiedCode);
 
             var transfer = nodemailer.createTransport({
                 service: "hotmail",
@@ -229,9 +222,6 @@ app.post("/sendVerificationMail", (req, res) => {
 });
 
 app.get("/verified", (req, res) => {
-    console.log(req.query);
-    console.log(req.query.email);
-    console.log(req.query.verifiedCode);
 
     var q = {
         email: req.query.email.toString(),
@@ -240,8 +230,6 @@ app.get("/verified", (req, res) => {
     
     Students.updateOne(q, {$set:{verified: true}}, (err, docs) => {
         if (err) throw err;
-        console.log(docs);
-        console.log("Updated");
         if (docs.modifiedCount == 1) {
             res.sendFile(__dirname + "/Views/verification.html");
         }
@@ -249,8 +237,6 @@ app.get("/verified", (req, res) => {
     
     Experts.updateOne(q, {$set:{verified: true}}, (err, docs) => {
         if (err) throw err;
-        console.log(docs);
-        console.log("Updated");
         if (docs.modifiedCount == 1) {
             res.sendFile(__dirname + "/Views/verification.html");
         }
@@ -262,15 +248,12 @@ app.get("/verified", (req, res) => {
 
 
 app.post("/saveUser", (req, res) => {
-    console.log(req.body);
 
     const {email, password, fullName, city, manner, major, image, verified, desc, verifiedCode} = req.body.user;
 
-    console.log(email, password, fullName, city, manner, image, verified, verifiedCode);
 
     if (manner == "searcher") {
 
-        console.log("inside");
         Students.create({
             email: email,
             password: password,
@@ -324,13 +307,11 @@ app.post("/saveUser", (req, res) => {
 
 
 app.post("/sendNewPass", (req, res) => {
-    console.log(req.body)
     const email = req.body.email;
     const password = req.body.password;
 
     Students.updateOne({email: email}, {$set: {password: password}}, (err, docs) => {
         if (err) throw err;
-        console.log("Updated");
 
         if (docs.modifiedCount == 1) {
             res.send("Success");
@@ -357,7 +338,7 @@ app.post("/sendNewPass", (req, res) => {
             };
         
             transfer.sendMail(mailInfo, (err) => {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     console.log("Your mail was sent.");
                 };
@@ -369,7 +350,6 @@ app.post("/sendNewPass", (req, res) => {
         if (docs.modifiedCount == 0) {
             Experts.updateOne({email: email}, {$set: {password: password}}, (err, docs) => {
         if (err) throw err;
-        console.log("Updated");
 
         if (docs.modifiedCount == 1) {
             res.send("Success");
@@ -396,7 +376,7 @@ app.post("/sendNewPass", (req, res) => {
             };
         
             transfer.sendMail(mailInfo, (err) => {
-                if (err) console.log(err);
+                if (err) throw err;
                 else {
                     console.log("Your mail was sent.");
                 };
