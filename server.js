@@ -56,7 +56,20 @@ app.post("/userLogin", (req, res) => {
     const { email, password } = req.body;
 
     Students.findOne({email: email, password: password}).then((doc) => {
-        res.send(doc);
+        if (doc != undefined) {
+            res.send(doc);
+        }
+        if (doc == undefined) {
+            Experts.findOne({email: email, password: password}).then(docs => {
+                if (docs != undefined) {
+                    res.send(docs);
+                }
+                if (docs == undefined) {
+                    res.send("Undefined");
+                }
+            })
+        }
+
     }).catch(err => {
         console.log(err);
     });
@@ -64,7 +77,77 @@ app.post("/userLogin", (req, res) => {
 })
 
 
+app.post("/sendNewVerificationMail", (req, res) => {
+    Students.findOne({email: req.body.email}).then(doc => {
+        if (doc.verifiedCode) {
+            console.log(doc.verifiedCode);
+            var transfer = nodemailer.createTransport({
+                service: "hotmail",
+                auth:{
+                    user: "dogukan_topcu35@hotmail.com",
+                    pass: "dT={11.03.2003}"
+                }
+            });
+        
+            var mailInfo = {
+                from: "dogukan_topcu35@hotmail.com",
+                to: req.body.email,
+                subject: "Send a mail with NodeJs",
+                text: "My first mail sent with NodeJs.",
+                html: `
+                    <h1>Doğrulama Kodu</h1>
+                    <h2>${doc.verifiedCode}</h2>
+                    <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                    <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                `
+            };
+        
+            transfer.sendMail(mailInfo, (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log("Your mail was sent.");
+                };
+            });
+        }
+        if (!doc.verifiedCode) {
+            Experts.findOne({email: req.body.email}).then(docs => {
+                if (doc.verifiedCOde) {
+                    var transfer = nodemailer.createTransport({
+                        service: "hotmail",
+                        auth:{
+                            user: "dogukan_topcu35@hotmail.com",
+                            pass: "dT={11.03.2003}"
+                        }
+                    });
+                
+                    var mailInfo = {
+                        from: "dogukan_topcu35@hotmail.com",
+                        to: req.body.email,
+                        subject: "Send a mail with NodeJs",
+                        text: "My first mail sent with NodeJs.",
+                        html: `
+                            <h1>Doğrulama Kodu</h1>
+                            <h2>${doc.verifiedCode}</h2>
+                            <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                            <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                        `
+                    };
+                
+                    transfer.sendMail(mailInfo, (err) => {
+                        if (err) console.log(err);
+                        else {
+                            console.log("Your mail was sent.");
+                        };
+                    });
+                }
 
+                if (doc.verifiedCOde) {
+                    res.send("Warning");
+                }
+            })
+        }
+    })
+})
 
 app.post("/sendVerificationMail", (req, res) => {
     console.log(req.body);
@@ -176,7 +259,6 @@ app.get("/verified", (req, res) => {
 
 
 
-
 app.post("/saveUser", (req, res) => {
     console.log(req.body);
 
@@ -238,12 +320,154 @@ app.post("/saveUser", (req, res) => {
 
 
 
-app.post("/imageUpload", (req, res) => {
-    console.log(req.body);
-    const image = req.body;
+
+app.post("/sendNewPass", (req, res) => {
+    console.log(req.body)
+    const email = req.body.email;
+    const password = req.body.password;
+
+    Students.updateOne({email: email}, {$set: {password: password}}, (err, docs) => {
+        if (err) throw err;
+        console.log("Updated");
+
+        if (docs.modifiedCount == 1) {
+            res.send("Success");
+
+            var transfer = nodemailer.createTransport({
+                service: "hotmail",
+                auth:{
+                    user: "dogukan_topcu35@hotmail.com",
+                    pass: "dT={11.03.2003}"
+                }
+            });
+        
+            var mailInfo = {
+                from: "dogukan_topcu35@hotmail.com",
+                to: email,
+                subject: "Yeni Şifre",
+                text: "Miras Eğitim",
+                html: `
+                    <h1>Doğrulama Kodu</h1>
+                    <h2>${password}</h2>
+                    <h4>Yeni şifreniz.</h4>
+                    <a href="http://localhost:3000/giris-yap">Giriş Yap</a>
+                `
+            };
+        
+            transfer.sendMail(mailInfo, (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log("Your mail was sent.");
+                };
+            });
+
+
+        }
+
+        if (docs.modifiedCount == 0) {
+            Experts.updateOne({email: email}, {$set: {password: password}}, (err, docs) => {
+        if (err) throw err;
+        console.log("Updated");
+
+        if (docs.modifiedCount == 1) {
+            res.send("Success");
+
+            var transfer = nodemailer.createTransport({
+                service: "hotmail",
+                auth:{
+                    user: "dogukan_topcu35@hotmail.com",
+                    pass: "dT={11.03.2003}"
+                }
+            });
+        
+            var mailInfo = {
+                from: "dogukan_topcu35@hotmail.com",
+                to: email,
+                subject: "Yeni Şifre",
+                text: "Miras Eğitim",
+                html: `
+                    <h1>Doğrulama Kodu</h1>
+                    <h2>${password}</h2>
+                    <h4>Yeni şifreniz.</h4>
+                    <a href="http://localhost:3000/giris-yap">Giriş Yap</a>
+                `
+            };
+        
+            transfer.sendMail(mailInfo, (err) => {
+                if (err) console.log(err);
+                else {
+                    console.log("Your mail was sent.");
+                };
+            });
+
+
+        }
+
+        if (docs.modifiedCount == 0) {
+            res.send("Undefined");
+        }
+            })
+        }
+    })
+
     
 })
 
+
+
+
+
+// **********************************************************************************
+
+// Get Proccess
+
+
+// ---------Login----Register----------------
+app.get("/getUserEmails", (req, res) => {
+    Students.find({}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/getExpertsEmails", (req, res) => {
+    Experts.find({}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+
+
+// -------Admin Panel--------------
+
+app.get("/students", (req, res) => {
+    Students.find({}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/experts", (req, res) => {
+    Experts.find({}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/vipExperts", (req, res) => {
+    Experts.find({isVip: true}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/vipOfWeek", (req, res) => {
+    Experts.find({isVipOfWeek: true}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/admins", (req, res) => {
+    Admin.find({}).then((doc) => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
 
 
 app.listen(3005);
