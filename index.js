@@ -112,7 +112,7 @@ app.post("/sendNewVerificationMail", (req, res) => {
         }
         if (!doc.verifiedCode) {
             Experts.findOne({email: req.body.email}).then(docs => {
-                if (doc.verifiedCOde) {
+                if (doc.verifiedCode) {
                     var transfer = nodemailer.createTransport({
                         service: "hotmail",
                         auth:{
@@ -142,7 +142,7 @@ app.post("/sendNewVerificationMail", (req, res) => {
                     });
                 }
 
-                if (doc.verifiedCOde) {
+                if (doc.verifiedCode) {
                     res.send("Warning");
                 }
             })
@@ -163,6 +163,9 @@ app.post("/sendVerificationMail", (req, res) => {
                     pass: "dT={11.03.2003}"
                 }
             });
+            console.log(transfer);
+            console.log(doc.verifiedCode);
+            const verifiedCode = doc.verifiedCode
         
             var mailInfo = {
                 from: "dogukan_topcu35@hotmail.com",
@@ -171,7 +174,7 @@ app.post("/sendVerificationMail", (req, res) => {
                 text: "My first mail sent with NodeJs.",
                 html: `
                     <h1>Doğrulama Kodu</h1>
-                    <h2>${doc.verifiedCode}</h2>
+                    <h2>${verifiedCode}</h2>
                     <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
                     <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
                 `
