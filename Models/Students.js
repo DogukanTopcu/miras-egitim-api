@@ -1,3 +1,5 @@
+import { Int32 } from "bson";
+import { random } from "lodash";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
@@ -9,8 +11,8 @@ const StudentsSchema = Schema({
 
     city: {type: String},
     
-    verified: {type: Boolean},
-    verifiedCode: String,
+    verified: Boolean,
+    verifiedCode: {type: Number},
 
     signedDate: {type: String, default: Date.now},
     verifiedDate: Date
