@@ -430,7 +430,7 @@ app.get("/getExpertsEmails", (req, res) => {
 app.get("/getComments", (req, res) => {
     console.log(req.body);
     console.log(req.body.handle);
-    Comments.find({userId: req.body.handle}).then(doc => {
+    Comments.find({}).then(doc => {
         res.send(doc);
     }).catch(err => console.log(err));
 })
