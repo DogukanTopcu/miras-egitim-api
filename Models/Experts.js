@@ -9,7 +9,9 @@ const ExpertsSchema = Schema({
 
     city: String,
     major: String,
+    pricePerHour: Number,
     desc: String,
+    certificates: Array,
 
     verified: Boolean,
     // verifiedCode: Int16Array,
