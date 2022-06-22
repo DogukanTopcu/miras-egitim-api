@@ -433,7 +433,7 @@ app.get("/getComments", (req, res) => {
     Comments.find({}).then(doc => {
         res.send(doc);
     }).catch(err => console.log(err));
-})
+});
 
 
 
