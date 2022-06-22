@@ -10,7 +10,9 @@ const ExpertsSchema = Schema({
 
     city: {type: String},
     major: {type: String},
+    pricePerHour: {type: Number},
     desc: {type: String},
+    certificates: {type: Array},
 
     verified: {type: Boolean},
     verifiedCode: {type: Number},
