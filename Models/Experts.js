@@ -8,17 +8,11 @@ const ExpertsSchema = Schema({
     password: {type: String},
     image: {type: String},
 
-<<<<<<< HEAD
-    city: String,
-    major: String,
-    pricePerHour: Number,
-    desc: String,
-    certificates: Array,
-=======
     city: {type: String},
     major: {type: String},
+    pricePerHour: {type: Number},
     desc: {type: String},
->>>>>>> d7863143434d5ca819f3c49e9cb76aa0d6a18a1d
+    certificates: {type: Array},
 
     verified: {type: Boolean},
     verifiedCode: {type: Number},
