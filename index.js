@@ -14,10 +14,12 @@ import { Date } from "mongoose";
 
 require("dotenv").config();
 
+
 const app = express();
 app.use(cors({
-    origin: ['https://illustrious-monstera-3ac08f.netlify.app/'],
-    credentials: true
+    origin: 'https://illustrious-monstera-3ac08f.netlify.app/',
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
