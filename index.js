@@ -11,12 +11,14 @@ import Admin from "./Models/Admin";
 import Comments from "./Models/Comments";
 
 import { Date } from "mongoose";
-import { major } from "semver";
 
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000/'],
+    credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
