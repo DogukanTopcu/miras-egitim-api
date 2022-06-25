@@ -16,7 +16,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:3000/'],
+    origin: ['https://illustrious-monstera-3ac08f.netlify.app/'],
     credentials: true
 }));
 app.use(bodyParser.json());
