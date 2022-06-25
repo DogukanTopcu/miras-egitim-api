@@ -21,6 +21,13 @@ app.use(cors({
     credentials: true,
     optionsSuccessStatus: 200
 }));
+app.all("/", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://illustrious-monstera-3ac08f.netlify.app/");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+})
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
