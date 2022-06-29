@@ -16,7 +16,9 @@ require("dotenv").config();
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:81",
+}));
 // app.use(cors({
 //     origin: 'https://illustrious-monstera-3ac08f.netlify.app/',
 //     credentials: true,
@@ -28,12 +30,14 @@ app.use(cors());
 //     next();
 // })
 
-
-app.use(bodyParser.json());
+// app.use(express.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({
+    limit: '50mb',
     extended: true
 }));
-app.use(bodyParser.text({ limit: '200mb' }));
+// app.use(express.bodyParser({limit: '50mb'}));
+// app.use(bodyParser.text({ limit: '1000mb' }));
 
 
 // mongodb://localhost:27017/miras-egitim
@@ -191,7 +195,7 @@ app.post("/sendVerificationMail", (req, res) => {
                 text: "My first mail sent with NodeJs.",
                 html: `
                     <h1>Doğrulama Kodu</h1>
-                    <h2>${verifiedCode}</h2>
+                    <h2>${doc.verifiedCode}</h2>
                     <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
                     <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
                 `
@@ -269,8 +273,9 @@ app.get("/verified", (req, res) => {
 
 app.post("/saveUser", (req, res) => {
 
-    const {email, password, fullName, city, manner, major, image, verified, desc, verifiedCode} = req.body.user;
-
+    const {email, password, fullName, city, manner, major, image, verified, desc, rating, certificates, pricePerHour, verifiedCode} = req.body.user;
+    console.log(verifiedCode);
+    // console.log(email, password, fullName, city, manner, major, image, verified, desc, rating, certificates, pricePerHour, verifiedCode);
 
     if (manner == "searcher") {
 
@@ -282,8 +287,6 @@ app.post("/saveUser", (req, res) => {
             verified: verified,
             verifiedCode: verifiedCode,
             image: image,
-
-
         }, err => {
             if (err) res.sendStatus(400);
             res.sendStatus(200);
@@ -307,6 +310,9 @@ app.post("/saveUser", (req, res) => {
             image: image,
             isVipOfWeek: false,
             isVip: false,
+
+            certificates: certificates,
+            pricePerHour: pricePerHour,
 
             // signedDate: Date.now,
             // verifiedDate: Date.now,
@@ -416,12 +422,36 @@ app.post("/sendNewPass", (req, res) => {
 })
 
 
+app.post("/postComment", (req, res) => {
+    const receiverId = req.body.userId;
+    const senderId = req.body.commenterId;
+    const comment = req.body.comment;
+
+    Comments.create({
+        userId: receiverId,
+        commenterId: senderId,
+        comment: comment
+    }, err => {
+            if (err) res.sendStatus(400);
+            res.sendStatus(200);
+    })
+})
+
 
 
 
 // **********************************************************************************
 
 // Get Proccess
+
+app.get("/getComments/:id", (req, res) => {
+    const advisorId = req.params.id;
+
+    Comments.find({userId: advisorId}).then((docs) => {
+        res.send(docs);
+    }).catch(err => console.log(err));
+});
+
 
 
 // ---------Login----Register----------------
@@ -433,16 +463,6 @@ app.get("/getUserEmails", (req, res) => {
 
 app.get("/getExpertsEmails", (req, res) => {
     Experts.find({}).then((doc) => {
-        res.send(doc);
-    }).catch(err => console.log(err));
-});
-
-
-
-app.get("/getComments", (req, res) => {
-    console.log(req.body);
-    console.log(req.body.handle);
-    Comments.find({userId: req.body.handle}).then(doc => {
         res.send(doc);
     }).catch(err => console.log(err));
 });

@@ -24,8 +24,8 @@ const ExpertsSchema = Schema({
     isVip: {type: Boolean},
     weeklyVipDate: {type: Date},
     vipDate: {type: Date},
-    // weeklyVipNumber: Int16Array,
-    // vipNumber: Int16Array,
+    weeklyVipNumber: {type: Number, default: 0},
+    vipNumber: {type: Number, default: 0},
 
 
 });
