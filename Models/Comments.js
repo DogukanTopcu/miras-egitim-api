@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
 const CommentSchema = Schema({
-    userId: ObjectId, // yorum yapılan kişinin id'si
-    commenterId: ObjectId, // yorum yapan kişinin id'si
-    comment: String,
-    date: Date,
-    rate: Number,
+    userId: {type: ObjectId}, // yorum yapılan kişinin id'si
+    commenterId: {type: ObjectId}, // yorum yapan kişinin id'si
+    comment: {type: String},
+    date: {type: Date, default: Date.now()},
+    rate: {type: Number, default: 0},
 });
 
 export default mongoose.model("comments", CommentSchema);

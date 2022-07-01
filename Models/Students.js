@@ -14,7 +14,7 @@ const StudentsSchema = Schema({
     verified: Boolean,
     verifiedCode: {type: Number},
 
-    signedDate: {type: String, default: Date.now},
+    signedDate: {type: String, default: Date.now()},
     verifiedDate: Date
     
 
