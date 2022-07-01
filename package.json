@@ -1,15 +1,5 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "esm": "^3.2.25",
-    "express": "^4.18.1",
-    "mongoose": "^6.3.8",
-    "nodemailer": "^6.7.5",
-    "semver": "^7.3.7"
-  }
-=======
+
   "name": "miras-egitim-api",
   "version": "1.0.0",
   "description": "",
@@ -42,5 +32,4 @@
     "url": "https://github.com/DogukanTopcu/miras-egitim-api/issues"
   },
   "homepage": "https://github.com/DogukanTopcu/miras-egitim-api#readme"
->>>>>>> d7863143434d5ca819f3c49e9cb76aa0d6a18a1d
 }
