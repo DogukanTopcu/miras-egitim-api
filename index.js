@@ -303,7 +303,9 @@ app.post("/saveUser", (req, res) => {
             
             city: city,
             desc: desc,
+            pricePerHour: Number,
             major: major,
+            certificates: Array,
 
             verified: verified,
             verifiedCode: verifiedCode,
