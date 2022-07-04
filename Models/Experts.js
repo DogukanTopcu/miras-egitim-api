@@ -18,6 +18,7 @@ const ExpertsSchema = Schema({
     verifiedCode: {type: Number},
 
     signedDate: {type: Date, default: Date.now()},
+    endDate: {type: Date, default: Date.now() + 30 * 24 * 60 * 60 * 1000},
     verifiedDate: {type: Date},
 
     isVipOfWeek: {type: Boolean},

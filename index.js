@@ -9,8 +9,10 @@ import Experts from "./Models/Experts";
 import Students from "./Models/Students";
 import Admin from "./Models/Admin";
 import Comments from "./Models/Comments";
+import Rates from "./Models/Rates";
+import CommentRates from "./Models/CommentRates";
 
-import { Date } from "mongoose";
+
 
 require("dotenv").config();
 
@@ -104,15 +106,15 @@ app.post("/sendNewVerificationMail", (req, res) => {
     Students.findOne({email: req.body.email}).then(doc => {
         if (doc.verifiedCode) {
             var transfer = nodemailer.createTransport({
-                service: "hotmail",
+                service: "outlook",
                 auth:{
-                    user: "dogukan_topcu35@hotmail.com",
-                    pass: "dT={11.03.2003}"
+                    user: "dogukantopcu35@outlook.com",
+                    pass: "dT-{02584560}"
                 }
             });
         
             var mailInfo = {
-                from: "dogukan_topcu35@hotmail.com",
+                from: "dogukantopcu35@outlook.com",
                 to: req.body.email,
                 subject: "Send a mail with NodeJs",
                 text: "My first mail sent with NodeJs.",
@@ -135,15 +137,15 @@ app.post("/sendNewVerificationMail", (req, res) => {
             Experts.findOne({email: req.body.email}).then(docs => {
                 if (doc.verifiedCode) {
                     var transfer = nodemailer.createTransport({
-                        service: "hotmail",
+                        service: "outlook",
                         auth:{
-                            user: "dogukan_topcu35@hotmail.com",
-                            pass: "dT={11.03.2003}"
+                            user: "dogukantopcu35@outlook.com",
+                            pass: "dT-{02584560}"
                         }
                     });
                 
                     var mailInfo = {
-                        from: "dogukan_topcu35@hotmail.com",
+                        from: "dogukantopcu35@outlook.com",
                         to: req.body.email,
                         subject: "Send a mail with NodeJs",
                         text: "My first mail sent with NodeJs.",
@@ -178,18 +180,17 @@ app.post("/sendVerificationMail", (req, res) => {
         Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
 
             var transfer = nodemailer.createTransport({
-                service: "hotmail",
+                service: "outlook",
                 auth:{
-                    user: "dogukan_topcu35@hotmail.com",
-                    pass: "dT={11.03.2003}"
+                    user: "dogukantopcu35@outlook.com",
+                    pass: "dT-{02584560}"
                 }
             });
-            console.log(transfer);
             console.log(doc.verifiedCode);
             const verifiedCode = doc.verifiedCode
         
             var mailInfo = {
-                from: "dogukan_topcu35@hotmail.com",
+                from: "dogukantopcu35@outlook.com",
                 to: req.body.email,
                 subject: "Send a mail with NodeJs",
                 text: "My first mail sent with NodeJs.",
@@ -206,6 +207,7 @@ app.post("/sendVerificationMail", (req, res) => {
                 else {
                     console.log("Your mail was sent.");
                 };
+                res.send("Success");
             });
         });
     }
@@ -214,15 +216,15 @@ app.post("/sendVerificationMail", (req, res) => {
         Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
 
             var transfer = nodemailer.createTransport({
-                service: "hotmail",
+                service: "outlook",
                 auth:{
-                    user: "dogukan_topcu35@hotmail.com",
-                    pass: "dT={11.03.2003}"
+                    user: "dogukantopcu35@outlook.com",
+                    pass: "dT-{02584560}"
                 }
             });
         
             var mailInfo = {
-                from: "dogukan_topcu35@hotmail.com",
+                from: "dogukantopcu35@outlook.com",
                 to: req.body.email,
                 subject: "Send a mail with NodeJs",
                 text: "My first mail sent with NodeJs.",
@@ -343,15 +345,15 @@ app.post("/sendNewPass", (req, res) => {
             res.send("Success");
 
             var transfer = nodemailer.createTransport({
-                service: "hotmail",
+                service: "outlook",
                 auth:{
-                    user: "dogukan_topcu35@hotmail.com",
-                    pass: "dT={11.03.2003}"
+                    user: "dogukantopcu35@outlook.com",
+                    pass: "dT-{02584560}"
                 }
             });
         
             var mailInfo = {
-                from: "dogukan_topcu35@hotmail.com",
+                from: "dogukantopcu35@outlook.com",
                 to: email,
                 subject: "Yeni Şifre",
                 text: "Miras Eğitim",
@@ -381,15 +383,15 @@ app.post("/sendNewPass", (req, res) => {
             res.send("Success");
 
             var transfer = nodemailer.createTransport({
-                service: "hotmail",
+                service: "outlook",
                 auth:{
-                    user: "dogukan_topcu35@hotmail.com",
-                    pass: "dT={11.03.2003}"
+                    user: "dogukantopcu35@outlook.com",
+                    pass: "dT-{02584560}"
                 }
             });
         
             var mailInfo = {
-                from: "dogukan_topcu35@hotmail.com",
+                from: "dogukantopcu35@outlook.com",
                 to: email,
                 subject: "Yeni Şifre",
                 text: "Miras Eğitim",
@@ -435,6 +437,125 @@ app.post("/postComment", (req, res) => {
             if (err) res.sendStatus(400);
             res.sendStatus(200);
     })
+});
+
+app.post("/updateCommentRate", (req, res) => {
+    const rate = req.body.rate;
+    const commentId = req.body.id;
+
+    Comments.updateOne({_id: commentId}, {$set:{rate: rate}}, (err, docs) => {
+        if (err) throw err;
+        res.sendStatus(200);
+    })
+})
+
+
+app.post("/rateUser", (req, res) => {
+    const receiverId = req.body.userId;
+    const voterId = req.body.voterId;
+    const rate = req.body.rate;
+
+    Rates.find({userId: receiverId, voterId: voterId}).then(doc => {
+        console.log(doc)
+        if (doc.length === 0) {
+            Rates.create({
+                userId: receiverId,
+                voterId: voterId,
+                rate: rate,
+            }, err => {
+                if (err) res.sendStatus(400);
+                res.sendStatus(200);
+            });
+            console.log("created");
+        }
+        else{
+            var q = {
+                userId: receiverId,
+                voterId: voterId
+            }
+            Rates.updateOne(q, {$set:{rate: rate, updated: true, date: Date.now()}}, (err, docs) => {
+                if (err) res.sendStatus(400);
+                console.log(docs);
+                res.sendStatus(200);
+            });
+            console.log("Updated");
+        }
+    });
+})
+
+
+app.post("/postCommentVote", (req, res) => {
+    const commentId = req.body.commentId;
+    const userId = req.body.userId;
+    const commenterId = req.body.commenterId;
+    const voterId = req.body.voterId;
+    const rate = req.body.rate;
+    var rateCount = req.body.rateCount;
+
+
+    CommentRates.findOne({commentId: commentId, voterId: voterId}).then(doc => {
+        if (doc) {
+            CommentRates.updateOne({_id: doc._id}, {$set:{rate: rate, updated: true}}, (err, docs) => {
+                if (err) res.sendStatus(400);
+            });
+        }
+        else {
+            console.log("inside create");
+            CommentRates.create({
+                commentId: commentId,
+                userId: userId,
+                commenterId: commenterId,
+                voterId: voterId,
+                rate: rate,
+            });
+        }
+    });
+    
+    // CommentRates.find({commentId: commentId}).then(doc => {
+    //     console.log(doc);
+    //     doc.map(value => {
+    //         console.log(value.rate);
+    //         if (value.rate == "up") {
+    //             rateCount += 1
+    //         }
+    //         if (value.rate == "down") {
+    //             rateCount -= 1
+    //         }
+    //     });
+
+    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
+    //         if (err) res.sendStatus(400);
+    //         console.log(docs);
+    //         res.sendStatus(200);
+    //     })
+    // });
+
+    // if (rate == "up") {
+    //     var rateCount = 0
+    //     Comments.findOne({_id: commentId}).then(doc => {
+    //         console.log(doc);
+    //         rateCount = doc.rate + 1;
+    //         console.log(rateCount)
+    //     })
+    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
+    //         if (err) res.sendStatus(400);
+    //         console.log(docs);
+    //         res.sendStatus(200);
+    //     })
+    // }
+    // if (rate == "down") {
+    //     var rateCount = 0
+    //     Comments.findOne({_id: commentId}).then(doc => {
+    //         console.log(doc);
+    //         rateCount = doc.rate - 1;
+    //         console.log(rateCount)
+    //     })
+    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
+    //         if (err) res.sendStatus(400);
+    //         console.log(docs);
+    //         res.sendStatus(200);
+    //     })
+    // }
 })
 
 
@@ -451,6 +572,57 @@ app.get("/getComments/:id", (req, res) => {
         res.send(docs);
     }).catch(err => console.log(err));
 });
+
+app.get("/getRatesForUser/:userId/:voterId", (req, res) => {
+    const userId = req.params.userId;
+    const voterId = req.params.voterId;
+    Rates.findOne({userId: userId, voterId: voterId}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/getCommenter/:id", (req, res) => {
+    const commenterId = req.params.id;
+
+    Students.findOne({_id: commenterId}).then(doc => {
+        if (doc != undefined) {
+            res.send(doc);
+        }
+        if (doc == undefined) {
+            Experts.findOne({_id: commenterId}).then(docs => {
+                if (docs != undefined) {
+                    res.send(docs);
+                }
+                if (docs == undefined) {
+                    res.send("Undefined");
+                }
+            })
+        }
+    }).catch(err => console.log(err));
+});
+
+app.get("/isVoted/:currentId/:commentId", (req, res) => {
+    console.log(req.params)
+    const commentId = req.params.commentId;
+    const currentUserId = req.params.currentId;
+
+    CommentRates.find({commentId: commentId, voterId: currentUserId}).then(doc => {
+        if (doc.length >= 1) {
+            res.send(doc);
+        }
+        else{
+            res.send("no comments");
+        }
+    }).catch(err => console.log(err));
+});
+
+app.get("/getCommentRates/:commentId", (req, res) => {
+    const id = req.params.commentId;
+    CommentRates.find({commentId: id}).then(doc => {
+        res.send(doc);
+    })
+})
+
 
 
 
@@ -500,6 +672,34 @@ app.get("/admins", (req, res) => {
         res.send(doc);
     }).catch(err => console.log(err));
 });
+
+app.get("/getAdmin/:id", (req, res) => {
+    const id = req.params.id;
+    Admin.find({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+})
+
+
+
+app.get("/experts/:id", (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    Experts.findOne({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+app.get("/students/:id", (req, res) => {
+    const id = req.params.id;
+    Students.findOne({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+})
+
+
+
+
+
 
 
 app.listen(process.env.PORT || 3005, () => {
