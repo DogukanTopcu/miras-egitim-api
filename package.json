@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-
-=======
->>>>>>> 50b3bd894aac29e310f955115277f81ec1d29467
   "name": "miras-egitim-api",
   "version": "1.0.0",
   "description": "",
@@ -25,7 +21,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon -r esm index.js"
+    "start": "nodemon -r esm index.js",
+    "appClient": "cd .. && cd miras-egitim && npm start" 
   },
   "repository": {
     "type": "git",
