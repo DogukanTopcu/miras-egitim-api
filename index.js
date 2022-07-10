@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import nodemailer from "nodemailer"; 
-import url from "url";
+import nodemailer from "nodemailer";
 
 import Experts from "./Models/Experts";
 import Students from "./Models/Students";
@@ -11,6 +10,11 @@ import Admin from "./Models/Admin";
 import Comments from "./Models/Comments";
 import Rates from "./Models/Rates";
 import CommentRates from "./Models/CommentRates";
+import Mails from "./Models/Mails";
+import NewAdvisorNoti from "./Models/NewAdvisorNoti";
+import NewUserNoti from "./Models/NewUserNoti";
+import AdvisorApplyNoti from "./Models/AdvisorApplyNoti";
+
 
 
 
@@ -19,7 +23,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:81",
+    origin: "http://localhost",
 }));
 // app.use(cors({
 //     origin: 'https://illustrious-monstera-3ac08f.netlify.app/',
@@ -33,13 +37,12 @@ app.use(cors({
 // })
 
 // app.use(express.json());
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: '500mb' }));
 app.use(bodyParser.urlencoded({
-    limit: '50mb',
+    limit: '500mb',
     extended: true
 }));
-// app.use(express.bodyParser({limit: '50mb'}));
-// app.use(bodyParser.text({ limit: '1000mb' }));
+
 
 
 // mongodb://localhost:27017/miras-egitim
@@ -175,75 +178,104 @@ app.post("/sendNewVerificationMail", (req, res) => {
 
 app.post("/sendVerificationMail", (req, res) => {
 
-
-    if (req.body.manner == "searcher") {
-        Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
-
-            var transfer = nodemailer.createTransport({
-                service: "outlook",
-                auth:{
-                    user: "dogukantopcu35@outlook.com",
-                    pass: "dT-{02584560}"
-                }
-            });
-            console.log(doc.verifiedCode);
-            const verifiedCode = doc.verifiedCode
-        
-            var mailInfo = {
-                from: "dogukantopcu35@outlook.com",
-                to: req.body.email,
-                subject: "Send a mail with NodeJs",
-                text: "My first mail sent with NodeJs.",
-                html: `
-                    <h1>Doğrulama Kodu</h1>
-                    <h2>${doc.verifiedCode}</h2>
-                    <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
-                    <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
-                `
-            };
-        
-            transfer.sendMail(mailInfo, (err) => {
-                if (err) throw err;
-                else {
-                    console.log("Your mail was sent.");
+    setTimeout(() => {
+        if (req.body.manner == "searcher") {
+            Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+    
+                var transfer = nodemailer.createTransport({
+                    service: "outlook",
+                    auth:{
+                        user: "dogukantopcu35@outlook.com",
+                        pass: "dT-{02584560}"
+                    }
+                });
+                console.log(doc.verifiedCode);
+                const verifiedCode = doc.verifiedCode
+            
+                var mailInfo = {
+                    from: "dogukantopcu35@outlook.com",
+                    to: "dogukantopcu35@outlook.com", // req.body.email,
+                    subject: "Send a mail with NodeJs",
+                    text: "My first mail sent with NodeJs.",
+                    html: `
+                        <h1>Doğrulama Kodu</h1>
+                        <h2>${doc.verifiedCode}</h2>
+                        <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                        <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                    `
                 };
-                res.send("Success");
-            });
-        });
-    }
-
-    if (req.body.manner == "advisor") {
-        Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
-
-            var transfer = nodemailer.createTransport({
-                service: "outlook",
-                auth:{
-                    user: "dogukantopcu35@outlook.com",
-                    pass: "dT-{02584560}"
-                }
+            
+                transfer.sendMail(mailInfo, (err) => {
+                    if (err) throw err;
+                    else {
+                        console.log("Your mail was sent.");
+                        
+                    };
+                });
             });
         
-            var mailInfo = {
-                from: "dogukantopcu35@outlook.com",
-                to: req.body.email,
-                subject: "Send a mail with NodeJs",
-                text: "My first mail sent with NodeJs.",
-                html: `
-                    <h1>Doğrulama Kodu</h1>
-                    <h2>${doc.verifiedCode}</h2>
-                    <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
-                    <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
-                `
-            };
+            setTimeout(() => {
+                var studentId;
+                Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+                    studentId = doc._id;
+
+                    NewUserNoti.create({
+                        userId: studentId
+                    });
+                })
+
+            }, 5000);
+
+            res.send("Success");
+        }
         
-            transfer.sendMail(mailInfo, (err) => {
-                if (err) console.log(err);
-                else {
-                    console.log("Your mail was sent.");
+    
+        if (req.body.manner == "advisor") {
+            Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+    
+                var transfer = nodemailer.createTransport({
+                    service: "outlook",
+                    auth:{
+                        user: "dogukantopcu35@outlook.com",
+                        pass: "dT-{02584560}"
+                    }
+                });
+            
+                var mailInfo = {
+                    from: "dogukantopcu35@outlook.com",
+                    to: req.body.email,
+                    subject: "Send a mail with NodeJs",
+                    text: "My first mail sent with NodeJs.",
+                    html: `
+                        <h1>Doğrulama Kodu</h1>
+                        <h2>${doc.verifiedCode}</h2>
+                        <h4>${doc.fullName} lütfen aşağıdaki linke tıklayarak mailinizi onaylayınız.</h4>
+                        <a href="http://localhost:3005/verified?email=${doc.email}&verifiedCode=${doc.verifiedCode}">ONAYLA</a>
+                    `
                 };
+            
+                transfer.sendMail(mailInfo, (err) => {
+                    if (err) console.log(err);
+                    else {
+                        console.log("Your mail was sent.");
+                        res.send("success");
+                    };
+                });
             });
-        });
-    }
+
+            setTimeout(() => {
+                var advisorId;
+                Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
+                    advisorId = doc._id;
+                    AdvisorApplyNoti.create({
+                        expertId: advisorId
+                    });
+                })
+
+            }, 5000);
+
+        }
+    }, 3000);
 
 });
 
@@ -277,6 +309,7 @@ app.post("/saveUser", (req, res) => {
 
     const {email, password, fullName, city, manner, major, image, verified, desc, rating, certificates, pricePerHour, verifiedCode} = req.body.user;
     console.log(verifiedCode);
+    // console.log(certificates);
     // console.log(email, password, fullName, city, manner, major, image, verified, desc, rating, certificates, pricePerHour, verifiedCode);
 
     if (manner == "searcher") {
@@ -293,6 +326,8 @@ app.post("/saveUser", (req, res) => {
             if (err) res.sendStatus(400);
             res.sendStatus(200);
         })
+
+        
     }
 
     if (manner == "advisor") {
@@ -303,33 +338,26 @@ app.post("/saveUser", (req, res) => {
             
             city: city,
             desc: desc,
-            pricePerHour: Number,
+            pricePerHour: pricePerHour,
             major: major,
-            certificates: Array,
+            certificates: certificates,
 
             verified: verified,
             verifiedCode: verifiedCode,
 
-
             image: image,
-            isVipOfWeek: false,
-            isVip: false,
-
-            certificates: certificates,
-            pricePerHour: pricePerHour,
-
-            // signedDate: Date.now,
-            // verifiedDate: Date.now,
-
-            // weeklyVipDate: Date,
-            // vipDate: Date,
-            weeklyVipNumber: 0,
-            vipNumber: 0,
 
         }, err => {
-            if (err) res.sendStatus(400);
-            res.sendStatus(200);
-        })
+            if (err) {
+                res.sendStatus(400);
+                // console.log(err);
+            }
+            else{
+                res.sendStatus(200);
+            }
+        });
+
+        
     }
 })
 
@@ -431,14 +459,21 @@ app.post("/postComment", (req, res) => {
     const senderId = req.body.commenterId;
     const comment = req.body.comment;
 
+    Experts.updateOne({id: receiverId}, {$inc:{commentsCount: 1}}, (err, docs) => {
+        if (err) throw err;
+        console.log("increased");
+        console.log(docs);
+        res.sendStatus(200);
+    });
     Comments.create({
         userId: receiverId,
         commenterId: senderId,
         comment: comment
     }, err => {
             if (err) res.sendStatus(400);
-            res.sendStatus(200);
+            // res.sendStatus(200);
     })
+
 });
 
 app.post("/updateCommentRate", (req, res) => {
@@ -513,53 +548,144 @@ app.post("/postCommentVote", (req, res) => {
         }
     });
     
-    // CommentRates.find({commentId: commentId}).then(doc => {
-    //     console.log(doc);
-    //     doc.map(value => {
-    //         console.log(value.rate);
-    //         if (value.rate == "up") {
-    //             rateCount += 1
-    //         }
-    //         if (value.rate == "down") {
-    //             rateCount -= 1
-    //         }
-    //     });
 
-    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
-    //         if (err) res.sendStatus(400);
-    //         console.log(docs);
-    //         res.sendStatus(200);
-    //     })
-    // });
-
-    // if (rate == "up") {
-    //     var rateCount = 0
-    //     Comments.findOne({_id: commentId}).then(doc => {
-    //         console.log(doc);
-    //         rateCount = doc.rate + 1;
-    //         console.log(rateCount)
-    //     })
-    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
-    //         if (err) res.sendStatus(400);
-    //         console.log(docs);
-    //         res.sendStatus(200);
-    //     })
-    // }
-    // if (rate == "down") {
-    //     var rateCount = 0
-    //     Comments.findOne({_id: commentId}).then(doc => {
-    //         console.log(doc);
-    //         rateCount = doc.rate - 1;
-    //         console.log(rateCount)
-    //     })
-    //     Comments.updateOne({_id: commentId}, {$set:{rate: rateCount}}, (err, docs) => {
-    //         if (err) res.sendStatus(400);
-    //         console.log(docs);
-    //         res.sendStatus(200);
-    //     })
-    // }
 })
 
+
+
+
+app.post("/sendCollectiveMail", (req, res) => {
+    console.log(req.body);
+    res.send("success");
+});
+
+app.post("/sendIndividualMail", (req, res) => {
+    console.log(req.body);
+
+
+    var transfer = nodemailer.createTransport({
+        service: "outlook",
+        auth:{
+            user: "dogukantopcu35@outlook.com",
+            pass: "dT-{02584560}"
+        }
+    });
+
+    var mailInfo = {
+        from: "dogukantopcu35@outlook.com",
+        to: req.body.to,
+        subject: req.body.subj,
+        text: req.body.type,
+        html: `${req.body.content}`
+    };
+
+    transfer.sendMail(mailInfo, (err) => {
+        if (err) {
+            res.send("unsend");
+            throw err;
+        }
+        else {
+            console.log("Your mail was sent.");
+            res.send("success");
+        };
+    });
+
+});
+
+
+
+
+app.post("/confirmAdvisorApply", (req, res) => {
+    const userId = req.body.userId;
+    const email = req.body.userEmail;
+    const name = req.body.userName;
+
+    console.log(userId);
+
+    var transfer = nodemailer.createTransport({
+        service: "outlook",
+        auth:{
+            user: "dogukantopcu35@outlook.com",
+            pass: "dT-{02584560}"
+        }
+    });
+
+    var mailInfo = {
+        from: "dogukantopcu35@outlook.com",
+        to: email,
+        subject: "Miras Eğitim Uzman Başvurunuz Onaylandı",
+        html: `
+            <div>
+                <h1>Sayın ${name}, uzman hesabınız onaylanmıştır.</h1>
+            </div>
+        `
+    };
+
+    transfer.sendMail(mailInfo, (err) => {
+        if (err) {
+            res.send("unsend");
+            throw err;
+        }
+        else {
+            console.log("Your mail was sent.");
+            res.send("success");
+        };
+    });
+
+    Experts.updateOne({_id: userId}, {$set:{comfirmedAdvisor: true, comfirmedAdvisorDate: Date.now(), endDate: Date.now() + 30 * 24 * 60 * 60 * 1000}}, (err, docs) => {
+        if (err) console.log(err);
+        console.log(docs);
+    });
+
+    NewAdvisorNoti.create({
+        expertId: userId,
+    });
+    
+});
+app.post("/deniedAdvisorApply", (req, res) => {
+    const userId = req.body.userId;
+    const email = req.body.userEmail;
+    const name = req.body.userName;
+
+    var transfer = nodemailer.createTransport({
+        service: "outlook",
+        auth:{
+            user: "dogukantopcu35@outlook.com",
+            pass: "dT-{02584560}"
+        }
+    });
+
+    var mailInfo = {
+        from: "dogukantopcu35@outlook.com",
+        to: email,
+        subject: "Miras Eğitim Uzman Başvurunuz Reddedildi",
+        html: `
+            <div>
+                <h1>Sayın ${name}, uzman başvurunuz reddedilmiştir.</h1>
+                <p>Hesabınız silinmiştir, yeni bir başvuru için tekrar deneyiniz</p>
+            </div>
+        `
+    };
+
+    transfer.sendMail(mailInfo, (err) => {
+        if (err) {
+            res.send("unsend");
+            throw err;
+        }
+        else {
+            console.log("Your mail was sent.");
+            res.send("success");
+        };
+    });
+
+
+    Experts.remove({_id: userId}, err => {
+        if (err) console.log(err);
+    });
+    AdvisorApplyNoti.remove({expertId: userId}, err => {
+        if (err) console.log(err);
+    });
+});
 
 
 
@@ -624,6 +750,23 @@ app.get("/getCommentRates/:commentId", (req, res) => {
         res.send(doc);
     })
 })
+
+
+app.get("/getSendedMails", (req, res) => {
+    Mails.find({}).then(doc => {
+        res.send(doc);
+    })
+});
+app.get("/getSendedIndividualMails", (req, res) => {
+    Mails.find({type: "individual"}).then(doc => {
+        res.send(doc);
+    })
+});
+app.get("/getSendedCollectiveMails", (req, res) => {
+    Mails.find({type: "collective"}).then(doc => {
+        res.send(doc);
+    })
+});
 
 
 
@@ -696,7 +839,69 @@ app.get("/students/:id", (req, res) => {
     Students.findOne({_id: id}).then(doc => {
         res.send(doc);
     }).catch(err => console.log(err));
+});
+
+
+
+
+
+// Admin Panel - Notifications ****************************************************
+app.get("/newAdvisorNoti", (req, res) => {
+    var notification = []
+    NewAdvisorNoti.find({}).then(docs => {
+        docs.map(doc => {
+            Experts.find({_id: doc.expertId}).then(expert => {
+                notification.push(expert)
+            });
+        });
+        res.send(notification);
+    })
+});
+app.get("/newAdvisorNoti/:id", (req, res) => {
+    const id = req.params.id;
+    Experts.findOne({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/newUserNoti", (req, res) => {
+    var notification = []
+    NewUserNoti.find({}).then(docs => {
+        docs.map(doc => {
+            Experts.find({_id: doc.expertId}).then(expert => {
+                notification.push(expert)
+            })
+        })
+        res.send(notification);
+    })
+});
+app.get("/newUserNoti/:id", (req, res) => {
+    const id = req.params.id;
+    Students.find({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
+});
+
+app.get("/advisorApplianceNoti", (req, res) => {
+    var notification = []
+    AdvisorApplyNoti.find({}).then(docs => {
+        docs.map(doc => {
+            Experts.find({_id: doc.expertId}).then(expert => {
+                notification.push(expert)
+            })
+        })
+        res.send(notification);
+    })
+});
+app.get("/advisorApplianceNoti/:id", (req, res) => {
+    const id = req.params.id;
+    Experts.findOne({_id: id}).then(doc => {
+        res.send(doc);
+    }).catch(err => console.log(err));
 })
+
+
+// *****************************************************************
 
 
 
