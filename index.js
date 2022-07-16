@@ -109,15 +109,15 @@ app.post("/sendNewVerificationMail", (req, res) => {
     Students.findOne({email: req.body.email}).then(doc => {
         if (doc.verifiedCode) {
             var transfer = nodemailer.createTransport({
-                service: "outlook",
+                service: "yandex",
                 auth:{
-                    user: "dogukantopcu35@outlook.com",
-                    pass: "dT-{02584560}"
+                    user: "no-reply@mirasegitim.com",
+                    pass: "Miras123!"
                 }
             });
         
             var mailInfo = {
-                from: "dogukantopcu35@outlook.com",
+                from: "no-reply@mirasegitim.com",
                 to: req.body.email,
                 subject: "Send a mail with NodeJs",
                 text: "My first mail sent with NodeJs.",
@@ -140,16 +140,16 @@ app.post("/sendNewVerificationMail", (req, res) => {
             Experts.findOne({email: req.body.email}).then(docs => {
                 if (doc.verifiedCode) {
                     var transfer = nodemailer.createTransport({
-                        service: "outlook",
+                        service: "yandex",
                         auth:{
-                            user: "dogukantopcu35@outlook.com",
-                            pass: "dT-{02584560}"
+                            user: "no-reply@mirasegitim.com",
+                            pass: "Miras123!"
                         }
                     });
                 
                     var mailInfo = {
-                        from: "dogukantopcu35@outlook.com",
-                        to: req.body.email,
+                        from: "no-reply@mirasegitim.com",
+                        to: "dogukantopcu35@gmail.com", // req.body.email,
                         subject: "Send a mail with NodeJs",
                         text: "My first mail sent with NodeJs.",
                         html: `
@@ -183,18 +183,18 @@ app.post("/sendVerificationMail", (req, res) => {
             Students.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
     
                 var transfer = nodemailer.createTransport({
-                    service: "outlook",
+                    service: "yandex",
                     auth:{
-                        user: "dogukantopcu35@outlook.com",
-                        pass: "dT-{02584560}"
+                        user: "no-reply@mirasegitim.com",
+                        pass: "Miras123!"
                     }
                 });
                 console.log(doc.verifiedCode);
                 const verifiedCode = doc.verifiedCode
             
                 var mailInfo = {
-                    from: "dogukantopcu35@outlook.com",
-                    to: "dogukantopcu35@outlook.com", // req.body.email,
+                    from: "no-reply@mirasegitim.com",
+                    to: "dogukantopcu35@gmail.com", // req.body.email,
                     subject: "Send a mail with NodeJs",
                     text: "My first mail sent with NodeJs.",
                     html: `
@@ -234,15 +234,15 @@ app.post("/sendVerificationMail", (req, res) => {
             Experts.findOne({email: req.body.email, fullName: req.body.userName}).then(doc => {
     
                 var transfer = nodemailer.createTransport({
-                    service: "outlook",
+                    service: "yandex",
                     auth:{
-                        user: "dogukantopcu35@outlook.com",
-                        pass: "dT-{02584560}"
+                        user: "no-reply@mirasegitim.com",
+                        pass: "Miras123!"
                     }
                 });
             
                 var mailInfo = {
-                    from: "dogukantopcu35@outlook.com",
+                    from: "no-reply@mirasegitim.com",
                     to: req.body.email,
                     subject: "Send a mail with NodeJs",
                     text: "My first mail sent with NodeJs.",
@@ -375,15 +375,15 @@ app.post("/sendNewPass", (req, res) => {
             res.send("Success");
 
             var transfer = nodemailer.createTransport({
-                service: "outlook",
+                service: "yandex",
                 auth:{
-                    user: "dogukantopcu35@outlook.com",
-                    pass: "dT-{02584560}"
+                    user: "no-reply@mirasegitim.com",
+                    pass: "Miras123!"
                 }
             });
         
             var mailInfo = {
-                from: "dogukantopcu35@outlook.com",
+                from: "no-reply@mirasegitim.com",
                 to: email,
                 subject: "Yeni Şifre",
                 text: "Miras Eğitim",
@@ -413,15 +413,15 @@ app.post("/sendNewPass", (req, res) => {
             res.send("Success");
 
             var transfer = nodemailer.createTransport({
-                service: "outlook",
+                service: "yandex",
                 auth:{
-                    user: "dogukantopcu35@outlook.com",
-                    pass: "dT-{02584560}"
+                    user: "no-reply@mirasegitim.com",
+                    pass: "Miras123!"
                 }
             });
         
             var mailInfo = {
-                from: "dogukantopcu35@outlook.com",
+                from: "no-reply@mirasegitim.com",
                 to: email,
                 subject: "Yeni Şifre",
                 text: "Miras Eğitim",
@@ -562,17 +562,27 @@ app.post("/sendCollectiveMail", (req, res) => {
 app.post("/sendIndividualMail", (req, res) => {
     console.log(req.body);
 
+    var auth_user;
+    if (req.body.type == "No-reply") {
+        auth_user = "no-reply@mirasegitim.com"
+    }
+
+    if (req.body.type == "Info") {
+        auth_user = "info@mirasegitim.com"
+    }
+
+    console.log(auth_user);
 
     var transfer = nodemailer.createTransport({
-        service: "outlook",
+        service: "yandex",
         auth:{
-            user: "dogukantopcu35@outlook.com",
-            pass: "dT-{02584560}"
+            user: auth_user,
+            pass: "Miras123!"
         }
     });
 
     var mailInfo = {
-        from: "dogukantopcu35@outlook.com",
+        from: "no-reply@mirasegitim.com",
         to: req.body.to,
         subject: req.body.subj,
         text: req.body.type,
@@ -603,15 +613,15 @@ app.post("/confirmAdvisorApply", (req, res) => {
     console.log(userId);
 
     var transfer = nodemailer.createTransport({
-        service: "outlook",
+        service: "yandex",
         auth:{
-            user: "dogukantopcu35@outlook.com",
-            pass: "dT-{02584560}"
+            user: "no-reply@mirasegitim.com",
+            pass: "Miras123!"
         }
     });
 
     var mailInfo = {
-        from: "dogukantopcu35@outlook.com",
+        from: "no-reply@mirasegitim.com",
         to: email,
         subject: "Miras Eğitim Uzman Başvurunuz Onaylandı",
         html: `
@@ -648,15 +658,15 @@ app.post("/deniedAdvisorApply", (req, res) => {
     const name = req.body.userName;
 
     var transfer = nodemailer.createTransport({
-        service: "outlook",
+        service: "yandex",
         auth:{
-            user: "dogukantopcu35@outlook.com",
-            pass: "dT-{02584560}"
+            user: "no-reply@mirasegitim.com",
+            pass: "Miras123!"
         }
     });
 
     var mailInfo = {
-        from: "dogukantopcu35@outlook.com",
+        from: "no-reply@mirasegitim.com",
         to: email,
         subject: "Miras Eğitim Uzman Başvurunuz Reddedildi",
         html: `
@@ -848,10 +858,14 @@ app.get("/students/:id", (req, res) => {
 // Admin Panel - Notifications ****************************************************
 app.get("/newAdvisorNoti", (req, res) => {
     var notification = []
+    console.log(notification);
     NewAdvisorNoti.find({}).then(docs => {
+        console.log(docs);
         docs.map(doc => {
+            console.log(doc);
             Experts.find({_id: doc.expertId}).then(expert => {
                 notification.push(expert)
+                console.log(notification);
             });
         });
         res.send(notification);

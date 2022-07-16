@@ -36,5 +36,6 @@ const ExpertsSchema = Schema({
     totalNumber: {type: Number, default: 0},
 
 });
+ExpertsSchema.index({createdAt: 1}, {expireAfterSeconds: 2592000});
 
 export default mongoose.model("experts", ExpertsSchema);

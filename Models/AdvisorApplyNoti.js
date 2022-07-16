@@ -9,5 +9,6 @@ const AdvisorApplyNoti = Schema({
     date: {type: Date, default: Date.now()},
     deleteDate: {type: Date, default: Date.now() + 10 * 24 * 60 * 60 * 1000}
 });
+AdvisorApplyNoti.index({createdAt: 1}, {expireAfterSeconds: 864000});
 
 export default mongoose.model("advisor-apply-notification", AdvisorApplyNoti);
