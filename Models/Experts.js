@@ -13,7 +13,7 @@ const ExpertsSchema = Schema({
     pricePerHour: {type: Number},
     desc: {type: String},
     // certificates: [{src: String}],
-    certificates: {type: Array},
+    // certificates: {type: Array},
 
     verified: {type: Boolean},
     verifiedCode: {type: Number},

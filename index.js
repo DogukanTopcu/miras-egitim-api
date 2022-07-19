@@ -14,6 +14,7 @@ import Mails from "./Models/Mails";
 import NewAdvisorNoti from "./Models/NewAdvisorNoti";
 import NewUserNoti from "./Models/NewUserNoti";
 import AdvisorApplyNoti from "./Models/AdvisorApplyNoti";
+import Certificates from "./Models/Certificates";
 
 
 
@@ -340,7 +341,7 @@ app.post("/saveUser", (req, res) => {
             desc: desc,
             pricePerHour: pricePerHour,
             major: major,
-            certificates: certificates,
+            // certificates: certificates,
 
             verified: verified,
             verifiedCode: verifiedCode,
@@ -352,14 +353,32 @@ app.post("/saveUser", (req, res) => {
                 res.sendStatus(400);
                 // console.log(err);
             }
-            else{
-                res.sendStatus(200);
-            }
         });
+
+        console.log(certificates);
+        setTimeout(() => {
+            console.log(certificates);
+            Experts.findOne({email: email}).then(doc => {
+                console.log(certificates);
+                console.log(doc._id);
+                Certificates.create({
+                    userId: doc._id,
+                    certificates: certificates,
+                }, err => {
+                    if (err) {
+                        res.sendStatus(400);
+                    } else{
+                        res.sendStatus(200);
+                    }
+                })
+            })
+        }, 10000);
+
 
         
     }
-})
+});
+
 
 
 
@@ -781,6 +800,11 @@ app.get("/getSendedCollectiveMails", (req, res) => {
 
 
 
+app.get("/certificates", (req, res) => {
+    Certificates.find({}).then(doc => {
+        res.send(doc);
+    })
+})
 // ---------Login----Register----------------
 app.get("/getUserEmails", (req, res) => {
     Students.find({}).then((doc) => {
@@ -792,6 +816,27 @@ app.get("/getExpertsEmails", (req, res) => {
     Experts.find({}).then((doc) => {
         res.send(doc);
     }).catch(err => console.log(err));
+});
+
+app.post("/isEmailExist", (req, res) => {
+    Students.find({email: req.body.email}).then(doc => {
+        if (doc.length !== 0) {
+            console.log(doc);
+            res.send("exist");
+        }
+        else{
+            Experts.find({email: req.body.email}).then(docExperts => {
+                if (docExperts.length !== 0) {
+                    // console.log(docExperts);
+                    res.send("exist");
+                }
+                else{
+                    console.log("bum");
+                    res.send("pass");
+                }
+            })
+        }
+    })
 });
 
 
