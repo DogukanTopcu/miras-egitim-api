@@ -45,9 +45,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 
+const mongoConnection = process.env.CONNECTIINMONGODB;
 
 // mongodb://localhost:27017/miras-egitim
-mongoose.connect("mongodb+srv://dogukantopcu35:dogukan2003@cluster0.0fzxo.mongodb.net/?retryWrites=true&w=majority", {useNewUrlParser: true}, err => {
+mongoose.connect(mongoConnection, {useNewUrlParser: true}, err => {
     if (err) throw err;
     console.log("Connected");
 })

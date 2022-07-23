@@ -22,7 +22,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "nodemon -r esm index.js",
-    "appClient": "cd .. && cd miras-egitim && npm start" 
+    "appClient": "cd .. && cd miras-egitim && npm start"
   },
   "repository": {
     "type": "git",
