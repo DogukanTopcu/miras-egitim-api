@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-const mongoConnection = process.env.CONNECTIINMONGODB;
+const mongoConnection = process.env.MONGODB;
 
 // mongodb://localhost:27017/miras-egitim
 mongoose.connect(mongoConnection, {useNewUrlParser: true}, err => {
