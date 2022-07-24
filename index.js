@@ -44,7 +44,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
+const MAILPASSWORD = process.env.MAILPASSWORD;
 const mongoConnection = process.env.MONGODB;
 
 // mongodb://localhost:27017/miras-egitim
